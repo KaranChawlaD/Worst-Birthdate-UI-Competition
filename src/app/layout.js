@@ -5,12 +5,12 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Worst Birthdate UI",
-  description: "ICS4U Project",
+  description: "ICS4U Project - Karan, Wasif, Eric, Justin",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html className="bg-black" lang="en">
       <body className={inter.className}>{children}</body>
     </html>
   );

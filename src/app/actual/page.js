@@ -1,6 +1,6 @@
 "use client";
 // Using 'use client' is unnecessary in Next.js since the framework already optimizes rendering on the server or client as needed.
-import { Slider } from "@nextui-org/slider";
+import { Slider } from "@nextui-org/react";
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -24,7 +24,7 @@ const AutoSlider = ({ value, onChange }) => {
 
           return newValue;
         });
-      }, 5); // Adjust time to control speed
+      }, 2.5); // Adjust time to control speed
     } else if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -40,19 +40,28 @@ const AutoSlider = ({ value, onChange }) => {
 
   return (
     <div>
+      <style jsx>{`
+        .no-pointer-events {
+          pointer-events: none;
+        }
+      `}</style>
       <Slider 
-        label="Birthyear" 
-        id="birthyear"
-        step={1} 
-        maxValue={2024} 
-        minValue={1900} 
-        value={value} // Use state-managed value here
+        label="Birthyear"
+        step={1}
+        maxValue={2024}
+        minValue={1900}
+        value={value}
         className="max-w-md"
-        onChange={onChange} // Call the passed-in onChange function
+        onChange={onChange}
+        style={{ pointerEvents: 'none' }}
       />
-      <button type="button" className="bg-red-500 text-white rounded-md my-2 p-2 hover:bg-gray-500 w-full" onClick={handleToggle}
+      <button 
+        type="button" 
+        className="bg-red-500 text-white rounded-md my-2 p-2 hover:bg-gray-500 w-full" 
+        onClick={handleToggle}
       >
-        {isRunning ? 'Stop' : 'Start'} Slider</button>
+        {isRunning ? 'Stop' : 'Start'} Slider
+      </button>
     </div>
   );
 };

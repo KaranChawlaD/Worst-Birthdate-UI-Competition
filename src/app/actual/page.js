@@ -17,9 +17,21 @@ const generateGrid = () => {
     let row, col;
     
     for (let i = 0; i < 75; i++) {
-      direction = Math.random() < 0.5 ? 'HORIZONTAL' : 'VERTICAL';
-      let notFilled = true;
+      let directionNum = Math.random();
+      if (directionNum <= 1/4) {
+        direction = 'HORIZONTAL';
+      }
+      else if (1/4 < directionNum <= 2/4) {
+        direction = 'VERTICAL';
+      }
 
+      else if (2/4 < directionNum <= 3/4) {
+        direction = 'DIAGONAL1';
+      }
+      else {
+        direction = 'DIAGONAL2';
+      }
+      let notFilled = true;
       if (direction === 'HORIZONTAL') {
         row = Math.floor(Math.random() * 12);
         col = Math.floor(Math.random() * (12 - word.length));

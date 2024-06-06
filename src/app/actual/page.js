@@ -4,20 +4,22 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 const months = [
-  "DECEMBER", "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-  "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER"
+  "SEPTEMBER", "DECEMBER", "NOVEMBER", "FEBRUARY","JANUARY", "OCTOBER", "AUGUST", "MARCH", "APRIL", "JUNE",
+  "JULY", "MAY"
 ];
 
 const generateGrid = () => {
-  const grid = Array(12).fill(null).map(() => Array(12).fill(''));
+  let grid = Array(12).fill(null).map(() => Array(12).fill(''));
 
   // Function to place a word in the grid
   const placeWordInGrid = (word) => {
-    const direction = Math.random() < 0.5 ? 'HORIZONTAL' : 'VERTICAL';
+    let direction;
     let row, col;
-
-    for (let i = 0; i < 20; i++) {
+    
+    for (let i = 0; i < 75; i++) {
+      direction = Math.random() < 0.5 ? 'HORIZONTAL' : 'VERTICAL';
       let notFilled = true;
+
       if (direction === 'HORIZONTAL') {
         row = Math.floor(Math.random() * 12);
         col = Math.floor(Math.random() * (12 - word.length));
@@ -26,9 +28,6 @@ const generateGrid = () => {
             notFilled = false;
             break;
           }
-        }
-        if (notFilled == true) {
-          break;
         }
       } else {
         row = Math.floor(Math.random() * (12 - word.length));
@@ -39,18 +38,17 @@ const generateGrid = () => {
             break;
           }
         }
-        if (notFilled == true) {
-          break;
-        }
+      }
+      if (notFilled == true) {
+        break;
       }
     }
 
-
-    for (let i = 0; i < word.length; i++) {
+    for (let k = 0; k < word.length; k++) {
       if (direction === 'HORIZONTAL') {
-        grid[row][col + i] = word[i];
+        grid[row][col + k] = word[k];
       } else {
-        grid[row + i][col] = word[i];
+        grid[row + k][col] = word[k];
       }
     }
   };

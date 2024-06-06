@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@nextui-org/button": "^2.0.32",
+    "@nextui-org/react": "^2.4.1",
     "@nextui-org/slider": "^2.2.10",
     "@nextui-org/system": "^2.2.0",
     "@nextui-org/theme": "^2.2.4",

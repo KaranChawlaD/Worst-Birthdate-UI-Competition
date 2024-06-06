@@ -10,7 +10,7 @@ export default function Home() {
         <div className="flex flex-col items-left">
           <label className="text-xl my-2" for="birthdate">Birthdate:</label>
           <input
-            className="w-64 text-black"
+            className="w-64 p-2 text-black"
             type="date"
             id="birthdate"
             required

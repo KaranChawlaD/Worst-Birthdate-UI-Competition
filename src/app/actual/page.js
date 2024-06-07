@@ -1,7 +1,51 @@
 "use client";
 import { Slider } from "@nextui-org/react";
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+
+const equations = [
+  "(3 * 7) + 1", "(2 * 2) - (6 / 2)", "(3**2) * 2", "10 / 2 - (2 / 2)",
+  "(4**2)", "((2**2) * 2) - 2", "(3 * 3) - 3", "(4 * 6)", "(8 / 4) + (6 / 3)",
+  "(3 * 4) / 1", "(2**2) or (2 * 2)", "(2**3)", "(24 - 1)", "(5 * 4) - 1",
+  "(2 * 7)", "(4 * 5)", "(15 - 5 + 3)", "(3 * 5)", "(30 - 1)", "(3**2) - 2",
+  "((2**2) * 2) - 2", "(10 / 2) + (4 / 2)", "3**3", "20 + (4 / 4)", "(5 * 6)",
+  "(4 * 6)", "(5**2)", "(4 * 5)", "(5 * 6) + 1", "(5**2) - 8", "(3 - 2) * 1"
+];
+
+// const evaluateEquation = (equation) => {
+//   return eval(equation);
+// };
+
+const ButtonGrid = ({ onButtonSelect }) => {
+  const [revealed, setRevealed] = useState(Array(equations.length).fill(false));
+  const [selectedIndex, setSelectedIndex] = useState(null);
+
+  const handleButtonClick = (index) => {
+    if (!revealed[index]) {
+      setRevealed(prev => {
+        const newRevealed = [...prev];
+        newRevealed[index] = true;
+        return newRevealed;
+      });
+    } else {
+      setSelectedIndex(index);
+      // onButtonSelect(eval(equations[index]))
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-5 gap-2">
+      {equations.map((eq, index) => (
+        <button
+          key={index}
+          className={`p-4 border ${revealed[index] ? 'bg-gray-200' : 'bg-gray-400'} ${selectedIndex === index ? 'bg-blue-500' : ''}`}
+          onClick={() => handleButtonClick(index)}
+        >
+          {revealed[index] ? evaluateEquation(eq) : ''}
+        </button>
+      ))}
+    </div>
+  );
+};
 
 const months = [
   "DECEMBER", "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
@@ -71,8 +115,19 @@ const generateGrid = () => {
 };
 
 const WordSearch = ({ onMonthSelect }) => {
-  const [grid] = useState(generateGrid());
+  const [grid, setGrid] = useState(generateGrid());
   const [selectedCells, setSelectedCells] = useState([]);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGrid(generateGrid());
+      setSelectedCells([]);
+    }, 7000);
+
+    intervalRef.current = interval;
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCellClick = (row, col) => {
     setSelectedCells([...selectedCells, { row, col }]);
@@ -81,6 +136,7 @@ const WordSearch = ({ onMonthSelect }) => {
   const checkSelectedWord = () => {
     const selectedWord = selectedCells.map(cell => grid[cell.row][cell.col]).join('');
     if (months.includes(selectedWord)) {
+      clearInterval(intervalRef.current);
       onMonthSelect(selectedWord);
     }
   };
@@ -207,12 +263,12 @@ const PongGame = ({ onSubmit }) => {
     };
 
     const drawSubmitTarget = () => {
-      ctx.beginPath();
-      ctx.rect(submitX, submitY, 70, 20);
-      ctx.fillStyle = '#90EE90';
-      ctx.fill();
-      ctx.closePath();
-      ctx.fillStyle = '#000000';
+      // ctx.beginPath();
+      // ctx.rect(submitX, submitY, 70, 20);
+      // ctx.fillStyle = '#000000'; 
+      // ctx.fill();
+      // ctx.closePath();
+      ctx.fillStyle = '#FFFFFF';
       ctx.font = '16px Arial';
       ctx.fillText('SUBMIT', submitX + 5, submitY + 15);
     };
@@ -288,7 +344,7 @@ const PongGame = ({ onSubmit }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <canvas ref={canvasRef} width="480" height="320" style={{ border: '1px solid #000' }} />
+      <canvas ref={canvasRef} width="480" height="640" style={{ border: '3px solid white' }} />
       {!gameStarted && (
         <button
           className="bg-blue-500 text-white rounded-md mt-2 p-2 hover:bg-gray-500"
@@ -317,7 +373,7 @@ export default function Actual() {
     <>
       <h1 className="text-5xl font-bold text-center mt-32 mb-16">Haha, you thought that was the actual interface?</h1>
       <div className="flex flex-col justify-center items-center">
-        <div className="flex flex-col items-left mb-64">
+        <div className="flex flex-col items-left mb-16">
           <label className="text-4xl font-bold" htmlFor="birthday">Enter your birthday</label>
           <input
             type="text"
@@ -326,6 +382,7 @@ export default function Actual() {
             onChange={(e) => setBirthday(e.target.value)}
             className="mt-4 mb-4 p-2 text-black border border-gray-300 rounded"
           />
+          {/* <ButtonGrid value={birthday} onButtonSelect={setBirthday} /> */}
           <label className="text-4xl font-bold mt-16" htmlFor="birthmonth">Enter your birthmonth</label>
           <WordSearch onMonthSelect={setBirthmonth} />
           <label className="text-4xl font-bold mt-16" htmlFor="birthyear">Enter your birthyear</label>
@@ -334,7 +391,7 @@ export default function Actual() {
         <PongGame onSubmit={handleSubmit} />
       </div>
       {submitted && (
-        <div className="flex flex-col justify-center items-center mb-64">
+        <div className="flex flex-col justify-center items-center mb-16">
           <div className="mt-8 flex flex-col items-left">
             <h2 className="text-4xl font-bold">Submitted Information</h2>
             <p className="text-2xl">Birthday: {submittedValues.birthday}</p>

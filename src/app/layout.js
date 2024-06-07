@@ -11,6 +11,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html className="bg-black" lang="en">
+      <title>Worst Birthdate UI</title>
       <body className={inter.className}>{children}</body>
     </html>
   );

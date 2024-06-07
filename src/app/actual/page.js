@@ -1,46 +1,50 @@
 "use client";
 import { Slider } from "@nextui-org/react";
 import { useState, useEffect, useRef } from 'react';
+import { evaluate } from 'mathjs'
 
 const equations = [
-  "(3 * 7) + 1", "(2 * 2) - (6 / 2)", "(3**2) * 2", "10 / 2 - (2 / 2)",
-  "(4**2)", "((2**2) * 2) - 2", "(3 * 3) - 3", "(4 * 6)", "(8 / 4) + (6 / 3)",
-  "(3 * 4) / 1", "(2**2) or (2 * 2)", "(2**3)", "(24 - 1)", "(5 * 4) - 1",
-  "(2 * 7)", "(4 * 5)", "(15 - 5 + 3)", "(3 * 5)", "(30 - 1)", "(3**2) - 2",
-  "((2**2) * 2) - 2", "(10 / 2) + (4 / 2)", "3**3", "20 + (4 / 4)", "(5 * 6)",
-  "(4 * 6)", "(5**2)", "(4 * 5)", "(5 * 6) + 1", "(5**2) - 8", "(3 - 2) * 1"
+  "(3 * 7) + 1", "(2 * 2) - (6 / 2)", "(3^2) * 2", "10 / 2 - (2 / 2)",
+  "(4^2)", "((2^2) * 2) - 2", "(3 * 3) - 3", "(4 * 6)", "(8 / 4) + (6 / 3)",
+  "(3 * 4) / 1", "(2^2)", "(2^3)", "(24 - 1)", "(5 * 4) - 1",
+  "(2 * 7)", "(4 * 5)", "(15 - 5 + 3)", "(3 * 5)", "(30 - 1)", "(3^2) - 2",
+  "((2^2) * 2) - 2", "(10 / 2) + (4 / 2)", "3^3", "20 + (4 / 4)", "(5 * 6)",
+  "(4 * 6)", "(5^2)", "(4 * 5)", "(5 * 6) + 1", "(5^2) - 8", "(3 - 2) * 1"
 ];
 
-// const evaluateEquation = (equation) => {
-//   return eval(equation);
-// };
+const evaluateExpression = (expression) => {
+  try {
+    expression = expression.replace(/\^/g, '**');
+    const func = new Function('return ' + expression);
+    return func();
+  } catch (error) {
+    console.error('Error evaluating expression:', error);
+    return null;
+  }
+};
 
-const ButtonGrid = ({ onButtonSelect }) => {
-  const [revealed, setRevealed] = useState(Array(equations.length).fill(false));
-  const [selectedIndex, setSelectedIndex] = useState(null);
+const BirthdayGrid = ({ onSelect }) => {
+  const [selectedEquation, setSelectedEquation] = useState('');
 
-  const handleButtonClick = (index) => {
-    if (!revealed[index]) {
-      setRevealed(prev => {
-        const newRevealed = [...prev];
-        newRevealed[index] = true;
-        return newRevealed;
-      });
-    } else {
-      setSelectedIndex(index);
-      // onButtonSelect(eval(equations[index]))
-    }
+  const getButtonLabel = (equation) => {
+    return evaluateExpression(equation);
+  };
+
+  const handleButtonClick = (equation) => {
+    const result = getButtonLabel(equation);
+    setSelectedEquation(equation);
+    onSelect(result);
   };
 
   return (
-    <div className="grid grid-cols-5 gap-2">
-      {equations.map((eq, index) => (
+    <div className="grid grid-cols-6 gap-2 text-black">
+      {equations.map((equation, index) => (
         <button
           key={index}
-          className={`p-4 border ${revealed[index] ? 'bg-gray-200' : 'bg-gray-400'} ${selectedIndex === index ? 'bg-blue-500' : ''}`}
-          onClick={() => handleButtonClick(index)}
+          className={`w-20 h-20 flex items-center justify-center border border-gray-300 hover:bg-gray-200 ${selectedEquation === equation ? 'bg-green-300' : 'bg-white'}`}
+          onClick={() => handleButtonClick(equation)}
         >
-          {revealed[index] ? evaluateEquation(eq) : ''}
+          {equation}
         </button>
       ))}
     </div>
@@ -375,14 +379,14 @@ export default function Actual() {
       <div className="flex flex-col justify-center items-center">
         <div className="flex flex-col items-left mb-16">
           <label className="text-4xl font-bold" htmlFor="birthday">Enter your birthday</label>
-          <input
+          {/* <input
             type="text"
             id="birthday"
             value={birthday}
             onChange={(e) => setBirthday(e.target.value)}
             className="mt-4 mb-4 p-2 text-black border border-gray-300 rounded"
-          />
-          {/* <ButtonGrid value={birthday} onButtonSelect={setBirthday} /> */}
+          /> */}
+          <BirthdayGrid onSelect={(value) => setBirthday(value)} />
           <label className="text-4xl font-bold mt-16" htmlFor="birthmonth">Enter your birthmonth</label>
           <WordSearch onMonthSelect={setBirthmonth} />
           <label className="text-4xl font-bold mt-16" htmlFor="birthyear">Enter your birthyear</label>

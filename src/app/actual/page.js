@@ -11,56 +11,62 @@ const months = [
 const generateGrid = () => {
   let grid = Array(12).fill(null).map(() => Array(12).fill(''));
 
-  // Function to place a word in the grid
   const placeWordInGrid = (word) => {
     let direction;
-    let row, col;
-    
-    for (let i = 0; i < 75; i++) {
-      let directionNum = Math.random();
-      if (directionNum <= 1/4) {
-        direction = 'HORIZONTAL';
-      }
-      else if (1/4 < directionNum <= 2/4) {
-        direction = 'VERTICAL';
-      }
+    let notFilled = true;
+    let curRow = 0;
+    let curCol = 0;
 
-      else if (2/4 < directionNum <= 3/4) {
+    for (let i = 0; i < 75 && notFilled; i++) {  // Modified the loop to stop if a place is found
+      let directionNum = Math.random();
+      if (directionNum <= 0.1) {
+        direction = 'HORIZONTAL';
+      } else if (directionNum <= 0.2) {
+        direction = 'VERTICAL';
+      } else if (directionNum <= 0.6) {
         direction = 'DIAGONAL1';
-      }
-      else {
+      } else {
         direction = 'DIAGONAL2';
       }
-      let notFilled = true;
-      if (direction === 'HORIZONTAL') {
-        row = Math.floor(Math.random() * 12);
-        col = Math.floor(Math.random() * (12 - word.length));
-        for (let j = 0; j < word.length; j++) {
-          if (grid[row][col+j] != '') {
-            notFilled = false;
-            break;
-          }
-        }
-      } else {
-        row = Math.floor(Math.random() * (12 - word.length));
-        col = Math.floor(Math.random() * 12);
-        for (let j = 0; j < word.length; j++) {
-          if (grid[row+j][col] != '') {
-            notFilled = false;
-            break;
-          }
-        }
-      }
-      if (notFilled == true) {
-        break;
-      }
-    }
 
-    for (let k = 0; k < word.length; k++) {
-      if (direction === 'HORIZONTAL') {
-        grid[row][col + k] = word[k];
-      } else {
-        grid[row + k][col] = word[k];
+      let row = Math.floor(Math.random() * 12);
+      let col = Math.floor(Math.random() * 12);
+
+      // Adjust starting positions based on the direction
+      if (direction === 'HORIZONTAL' && col + word.length > 12) col = 12 - word.length;
+      if (direction === 'VERTICAL' && row + word.length > 12) row = 12 - word.length;
+      if (direction === 'DIAGONAL1' && (col + word.length > 12 || row + word.length > 12)) {
+        col = 12 - word.length;
+        row = 12 - word.length;
+      }
+      if (direction === 'DIAGONAL2' && (col + word.length > 12 || row - word.length < 0)) {
+        col = 12 - word.length;
+        row = word.length - 1;
+      }
+
+      notFilled = false;
+      for (let j = 0; j < word.length; j++) {
+        curRow = (direction === 'VERTICAL' || direction === 'DIAGONAL1') ? row + j : row;
+        curCol = (direction === 'HORIZONTAL' || direction === 'DIAGONAL1') ? col + j : col;
+        if (direction === 'DIAGONAL2') {
+          curRow = row - j;
+          curCol = col + j;
+        }
+
+        if (grid[curRow][curCol] !== '') {
+          notFilled = true;
+          break;
+        }
+        else if (grid[curRow][curCol] == word[j]) {
+          for (let k = row; k < row + word.length)
+        }
+      }
+
+      if (!notFilled) {
+        for (let j = 0; j < word.length; j++) {
+          grid[row + ((direction === 'VERTICAL' || direction === 'DIAGONAL1') ? j : 0)][col + ((direction === 'HORIZONTAL' || direction === 'DIAGONAL1') ? j : (direction === 'DIAGONAL2' ? j : 0))] = word[j];
+          if (direction === 'DIAGONAL2') grid[row - j][col + j] = word[j];
+        }
       }
     }
   };

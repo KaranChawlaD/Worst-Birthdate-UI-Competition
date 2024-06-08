@@ -14,7 +14,7 @@ const generateGrid = () => {
   const placeWordInGrid = (word) => {
     let filled = true;
 
-    for (let i = 0; i < 75 && filled == true; i++) {  
+    for (let i = 0; i < 250 && filled == true; i++) {  
       let direction = '';
       let curRow = 0;
       let curCol = 0;
@@ -41,10 +41,9 @@ const generateGrid = () => {
       }
       if (direction === 'DIAGONAL2' && (col + word.length > 12 || row - word.length < 0)) {
         col = Math.floor(Math.random() * (12 - word.length));
-        row = Math.floor(11 - (Math.random() * (word.length)));
+        row = word.length - 1;
       }
 
-      filled = false;
       for (let j = 0; j < word.length; j++) {
         curRow = (direction === 'VERTICAL' || direction === 'DIAGONAL1') ? row + j : row;
         curCol = (direction === 'HORIZONTAL' || direction === 'DIAGONAL1') ? col + j : col;
@@ -61,6 +60,7 @@ const generateGrid = () => {
           break;
         }
       }
+
       if (filled == false) {
         for (let j = 0; j < word.length; j++) {
           grid[row + ((direction === 'VERTICAL' || direction === 'DIAGONAL1') ? j : 0)][col + ((direction === 'HORIZONTAL' || direction === 'DIAGONAL1') ? j : (direction === 'DIAGONAL2' ? j : 0))] = word[j];
